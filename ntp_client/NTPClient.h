@@ -22,7 +22,7 @@ class NTPClient {
     byte          _packetBuffer[NTP_PACKET_SIZE];
 
     // função para solicitação dos pacotes
-    int          sendNTPPacket();
+    void          sendNTPPacket();
 
     public:
 
@@ -33,7 +33,7 @@ class NTPClient {
     int begin();
 
     //atualiza a hora toda vez que a função é chamada
-    int update();
+    void update();
 
     // retorna a hora atual em forma de string
     String getFormattedTime() const;

@@ -7,17 +7,38 @@ NTPClient::NTPClient(UDP& udp, char* serverName){
 }
 
 int NTPClient::begin(){
-    this->_udp->begin(1337);
+    this->_udp->begin(3123);
 }
 
-int NTPClient::update(){
-    return this->sendNTPPacket();
+void NTPClient::update(){
+
+    this->begin();
+
+    this->sendNTPPacket();
+
+    int cb = 0;
+    do {
+        delay ( 10 );
+        cb = this->_udp->parsePacket();
+        Serial.print("Aqui  ");
+        Serial.println(cb);
+       
+  } while (cb == 0);
+
 }
 
-int NTPClient::sendNTPPacket(){
+void NTPClient::sendNTPPacket(){
 
     //função para que todos os locais dos vetores recebam 0
     memset(this->_packetBuffer,0,NTP_PACKET_SIZE);
-    return this->_udp->beginPacket(this->_serverName,123);
+    this->_udp->beginPacket(this->_serverName,123);
 
+    this->_packetBuffer[0] = 0b11100011;   
+    this->_packetBuffer[1] = 0;     
+    this->_packetBuffer[2] = 6;     
+    this->_packetBuffer[3] = 0xEC;  
+    // inicia o pacote de dados
+    this->_udp->write(this->_packetBuffer,NTP_PACKET_SIZE);
+    // envia o pacote de dados 
+    this->_udp->endPacket();
 }
